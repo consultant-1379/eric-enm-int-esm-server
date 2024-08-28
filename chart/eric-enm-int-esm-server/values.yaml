@@ -1,0 +1,176 @@
+global:
+  registry:
+    url:
+    pullSecret:
+    imagePullPolicy: "IfNotPresent"
+  pullSecret:
+  security:
+    tls:
+      enabled: false
+imageCredentials:
+  pullSecret:
+  registry:
+    url:
+    imagePullPolicy:
+  repoPath:
+internalSecrets:
+  enabled: true
+
+eric-esm-server:
+  enabled: true
+  nameOverride: "eric-esm-server"
+  global:
+    security:
+      tls:
+        enabled: false
+  imageCredentials:
+    server:
+      registry:
+        url: serodocker.sero.gic.ericsson.se
+  ingress:
+    enabled: false
+    useHttpProxy: false
+    ingressClass: ""
+    hostname: ""
+    certificates:
+      enabled: false
+  server:
+    basePath: /esm-server
+  documentDatabase:
+    enabled: false
+  documentDatabasePg:
+    enabled: true
+    host: postgres-esm
+    port: 5432
+    database: postgres
+    secret: document-database-pg-secret-esm
+    secretUsernameKey: super-user
+    secretPasswordKey: super-pwd
+    tls:
+      enabled: false
+  authentication:
+    enabled: true
+    session:
+      singleSession: false
+  updateStrategy:
+    # CNOM's update strategy
+    type: RollingUpdate
+    rollingUpdate:
+      # The maximum number of Pods that can be unavailable during the update process
+      maxUnavailable: 1
+      # The maximum number of Pods that can be created over the desired number of Pods
+      maxSurge: 0
+  features:
+    statusOverview: true
+    kpiManagement: true
+    alertManagement: true
+    alertRulesConfig: true
+    alarmViewer: false
+    logViewer: false
+    nrfProvisionUeGroupProfile: false
+    nrfProvisionUeIndividualProfile: false
+    nrfProvisionNfProfile: false
+    nrfProvisionNrfAddress: false
+    nrfProvisionSnssaiUutMapping: false
+    nssfProvision: false
+    healthCheckViewer: false
+    metricViewer: false
+    centralConfigurationRepository: false
+    switchBrandBaseOnRole: false
+    yangStateData: false
+  productName: ENM System Monitor
+  productNameShort: ESM
+
+eric-data-document-database-pg:
+  enabled: true
+  imageCredentials:
+    registry:
+      url: armdocker.rnd.ericsson.se
+  highAvailability:
+    replicaCount: 1
+  nameOverride: "postgres-esm"
+  resources:
+    postgres:
+      requests:
+        memory: "4000Mi"
+        cpu: "1000m"
+      limits:
+        memory: "4000Mi"
+        cpu: "2000m"
+
+  persistentVolumeClaim:
+    enabled: false
+    size: "25Gi"
+  credentials:
+    kubernetesSecretName: document-database-pg-secret
+  postgresConfig:
+    autovacuum: "on"
+    autovacuum_analyze_threshold: 2000
+    autovacuum_max_workers: 6
+    autovacuum_naptime: "2min"
+    autovacuum_vacuum_threshold: 4000
+    max_wal_size: "1GB"
+    min_wal_size: "80MB"
+    max_slot_wal_keep_size: "1072"
+    client_min_messages: WARNING
+    effective_cache_size: "3275MB"
+    log_autovacuum_min_duration: 1000
+    log_connections: "off"
+    log_disconnections: "off"
+    log_duration: "off"
+    log_hostname: "off"
+    log_line_prefix: "pg_log-%m,db=%d,user=%u,%i"
+    log_min_error_statement: WARNING
+    log_min_messages: WARNING
+    log_rotation_age: 10080
+    log_rotation_size: 102400
+    log_truncate_on_rotation: "on"
+    maintenance_work_mem: "128MB"
+    max_connections: 1000
+    max_prepared_transactions: 500
+    max_stack_depth: "4MB"
+    shared_buffers: "2048MB"
+    temp_buffers: "64MB"
+    work_mem: "64MB"
+    logging_collector: "off"
+    log_destination: stderr
+    tcp_keepalives_interval: 0
+    tcp_keepalives_idle: 0
+    tcp_keepalives_count: 0
+  security:
+    postgres:
+      tls:
+        enable: false
+  global:
+    security:
+      tls:
+        enabled: false
+  affinity:
+    podAntiAffinity: hard
+  podDisruptionBudget:
+    maxUnavailable: 1
+  terminationGracePeriodSeconds:
+    postgres: 100
+  probes:
+    postgres:
+      startupProbe:
+        initialDelaySeconds: 0
+        periodSeconds: 5
+        failureThreshold: 140
+        timeoutSeconds: 32
+  targetPGversion: "13"
+
+postgresCredentials:
+  superPwd:
+  customUser:
+  customPwd:
+
+global:
+  timezone: UTC
+  security:
+    tls:
+      enabled: false
+
+appArmorProfile:
+  logshipper:
+    type: ""

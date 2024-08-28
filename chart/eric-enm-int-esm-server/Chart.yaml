@@ -1,0 +1,15 @@
+apiVersion: v2
+appVersion: '1.0'
+dependencies:
+- alias: eric-esm-server
+  condition: eric-esm-server.enabled
+  name: eric-cnom-server
+  repository: https://arm.sero.gic.ericsson.se/artifactory/proj-pc-rs-drop-helm
+  version: 2.14.0-291
+- condition: eric-data-document-database-pg.enabled
+  name: eric-data-document-database-pg
+  repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm/
+  version: 8.21.0+24
+description: A Helm chart for eric-enm-int-esm-server
+name: eric-enm-int-esm-server
+version: 0.0.1-219
